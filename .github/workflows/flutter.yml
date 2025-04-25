@@ -1,0 +1,42 @@
+name: Flutter CI
+
+on:
+  push:
+    branches:
+      - main  # Roda o workflow toda vez que houver push para a branch 'main'
+  pull_request:
+    branches:
+      - main  # Roda o workflow toda vez que houver um pull request para a branch 'main'
+
+jobs:
+  build:
+    runs-on: macos-latest  # Escolhe o sistema operacional (macOS, para builds de iOS)
+
+    steps:
+      # 1. Checkout do código
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # 2. Configuração do Flutter
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'stable'  # Pode usar qualquer versão estável ou específica do Flutter
+
+      # 3. Instalar dependências
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 4. Rodar os testes
+      - name: Run tests
+        run: flutter test
+
+      # 5. Build do APK para Android (se necessário)
+      - name: Build APK
+        run: flutter build apk --release
+
+      # 6. Build para iOS (se necessário)
+      - name: Build iOS
+        run: flutter build ios --release
+        env:
+          CI: true  # Garante que o build no GitHub Actions seja otimizado
